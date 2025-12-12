@@ -99,6 +99,14 @@ void Open303::setSampleRate(double newSampleRate)
 
   oscillator.setSampleRate    (  oversampling*newSampleRate);
   filter.setSampleRate        (  oversampling*newSampleRate);
+
+  // CRITICAL: Reset filter state after sample rate change to prevent unstable feedback
+  // Old y1-y4 values from previous sample rate cause runaway resonance on ARM/iOS
+  filter.reset();
+  highpass1.reset();
+  highpass2.reset();
+  allpass.reset();
+  notch.reset();
 }
 
 void Open303::setCutoff(double newCutoff)
